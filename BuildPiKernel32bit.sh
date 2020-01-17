@@ -185,7 +185,7 @@ function BeforeCleanIMG {
   sudo cat /run/systemd/resolve/stub-resolv.conf | sudo tee /mnt/run/systemd/resolve/stub-resolv.conf >/dev/null;
 
   # Prepare chroot
-  sudo cp -f /usr/bin/qemu-aarch64-static /mnt/usr/bin
+  sudo cp -f /usr/bin/qemu-armhf-static /mnt/usr/bin
   
   # % Remove incompatible RPI firmware / headers / modules
   sudo chroot /mnt /bin/bash << EOF
@@ -302,7 +302,7 @@ function UpdateIMG {
 
   # Prepare chroot
   if [ -d "/mnt/boot/firmware" ]; then
-    sudo cp -f /usr/bin/qemu-aarch64-static /mnt/usr/bin
+    sudo cp -f /usr/bin/qemu-armhf-static /mnt/usr/bin
   else
     sudo cp -f /usr/bin/qemu-arm-static /mnt/usr/bin
   fi
@@ -398,11 +398,11 @@ if [ ! -d "qemu" ]; then
   cd ~/qemu
   git submodule init
   git submodule update --recursive
-  ./configure --static --target-list=aarch64-linux-user,arm-linux-user
+  ./configure --static --target-list=armhf-linux-user,arm-linux-user
   make -j$(nproc)
-  cd aarch64-linux-user
-  sudo cp -f qemu-aarch64 qemu-aarch64-static
-  sudo cp -f qemu-aarch64-static /usr/bin
+  cd armhf-linux-user
+  sudo cp -f qemu-armhf qemu-armhf-static
+  sudo cp -f qemu-armhf-static /usr/bin
   cd ..
   cd arm-linux-user
   sudo cp -f qemu-arm qemu-arm-static
@@ -496,7 +496,7 @@ if [ ! -d "userland" ]; then
   echo "Building userland ..."
   git clone https://github.com/raspberrypi/userland userland --single-branch --branch=master --depth=1
   cd userland
-  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH ./buildme --aarch64
+  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH ./buildme --armhf
   cd build/arm-linux/release
   sudo make package
   sudo chown -R "$USER" . 
@@ -574,7 +574,7 @@ if [ ! -d "rpi-linux" ]; then
   fi
 
   # CONFIGURE / MAKE
-  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=armhf-linux-gnu- bcm2711_defconfig
 
   # % Run conform_config scripts which fix kernel flags to work correctly in arm64
   wget https://raw.githubusercontent.com/sakaki-/bcm2711-kernel-bis/master/conform_config.sh
@@ -592,16 +592,16 @@ if [ ! -d "rpi-linux" ]; then
 
   # % Run prepare to register all our .config changes
   cd ~/rpi-linux
-  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare dtbs
+  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=armhf-linux-gnu- prepare dtbs
 
   # % Prepare and build the rpi-linux source - create debian packages to make it easy to update the image
-  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- DTC_FLAGS="-@ -H epapr" LOCALVERSION=-"${IMAGE_VERSION}" KDEB_PKGVERSION="${IMAGE_VERSION}" deb-pkg
+  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=armhf-linux-gnu- DTC_FLAGS="-@ -H epapr" LOCALVERSION=-"${IMAGE_VERSION}" KDEB_PKGVERSION="${IMAGE_VERSION}" deb-pkg
   
   export KERNEL_VERSION=`cat ~/rpi-linux/include/generated/utsrelease.h | sed -e 's/.*"\(.*\)".*/\1/'`
 
   # % Make DTBOs
   # % Build kernel modules
-  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH sudo make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- DEPMOD=echo MODLIB=./lib/modules/"${KERNEL_VERSION}" INSTALL_FW_PATH=./lib/firmware modules_install
+  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH sudo make -j$(nproc) ARCH=arm64 CROSS_COMPILE=armhf-linux-gnu- DEPMOD=echo MODLIB=./lib/modules/"${KERNEL_VERSION}" INSTALL_FW_PATH=./lib/firmware modules_install
   sudo depmod --basedir . "${KERNEL_VERSION}"
   sudo chown -R "$USER" .
 else
@@ -659,7 +659,7 @@ mkdir -p ~/updates/bootfs/overlays
 mkdir -p ~/updates/rootfs/boot
 mkdir -p ~/updates/rootfs/home
 mkdir -p ~/updates/rootfs/usr/bin
-mkdir -p ~/updates/rootfs/usr/lib/aarch64-linux-gnu
+mkdir -p ~/updates/rootfs/usr/lib/armhf-linux-gnu
 mkdir -p ~/updates/rootfs/usr/lib/"${KERNEL_VERSION}"/overlays
 mkdir -p ~/updates/rootfs/usr/lib/"${KERNEL_VERSION}"/broadcom
 mkdir -p ~/updates/rootfs/lib/firmware
@@ -708,7 +708,7 @@ cp -rf ~/rpi-linux/arch/arm64/boot/dts/overlays/*.dtb* ~/updates/bootfs/overlays
 
 # % Copy new Raspberry Pi userland
 cp -rf ~/userland/build/arm-linux/release/vmcs_host_apps-1.0.pre-1-Linux/bin/* ~/updates/rootfs/usr/bin
-cp -rf ~/userland/build/arm-linux/release/vmcs_host_apps-1.0.pre-1-Linux/lib/* ~/updates/rootfs/usr/lib/aarch64-linux-gnu
+cp -rf ~/userland/build/arm-linux/release/vmcs_host_apps-1.0.pre-1-Linux/lib/* ~/updates/rootfs/usr/lib/armhf-linux-gnu
 cp -rf ~/userland/build/arm-linux/release/vmcs_host_apps-1.0.pre-1-Linux/include/* ~/updates/rootfs/usr/include
 
 # % Copy kernel and gpu firmware start*.elf, fixup*.dat and bootcode.bin files
