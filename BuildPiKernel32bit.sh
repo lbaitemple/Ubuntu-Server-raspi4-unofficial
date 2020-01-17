@@ -17,8 +17,8 @@
 IMAGE_VERSION="26"
 SOURCE_RELEASE="18.04.3"
 
-TARGET_IMG="ubuntu-18.04.3-preinstalled-server-arm64+raspi4.img"
-TARGET_IMGXZ="ubuntu-18.04.3-preinstalled-server-arm64+raspi4.img.xz"
+TARGET_IMG="ubuntu-18.04.3-preinstalled-server-armhf+raspi3.img"
+TARGET_IMGXZ="ubuntu-18.04.3-preinstalled-server-armhf+raspi3.img.xz"
 DESKTOP_IMGXZ="ubuntu-18.04.3-preinstalled-desktop-arm64+raspi4.img.xz"
 DESKTOP_IMG="ubuntu-18.04.3-preinstalled-desktop-arm64+raspi4.img"
 SOURCE_IMG="ubuntu-18.04.3-preinstalled-server-arm64+raspi3.img"
