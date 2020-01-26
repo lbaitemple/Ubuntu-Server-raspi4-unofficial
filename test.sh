@@ -422,7 +422,7 @@ fi
 # % Get Ubuntu source image 
 if [ ! -f "$UBUNTU_IMGXZ" ]; then
   echo "Retrieving Ubuntu 19.10 source image ..."
-  wget http://cdimage.ubuntu.com/releases/eoan/release/ubuntu-19.10-preinstalled-server-arm64+raspi3.img.xz
+  wget http://cdimage.ubuntu.com/releases/eoan/release/ubuntu-19.10.1-preinstalled-server-arm64+raspi3.img.xz
 fi
 
 if [ ! -f "$RASPBIAN_IMGZIP" ]; then
