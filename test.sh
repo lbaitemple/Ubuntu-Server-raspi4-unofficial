@@ -574,10 +574,10 @@ if [ ! -d "rpi-linux" ]; then
   fi
 
   # CONFIGURE / MAKE
-  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+  PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2837b0_defconfig
 
   # % Run conform_config scripts which fix kernel flags to work correctly in arm64
-  wget https://raw.githubusercontent.com/sakaki-/bcm2711-kernel-bis/master/conform_config.sh
+  wget https://raw.githubusercontent.com/sakaki-/bcm2837b0-kernel-bis/master/conform_config.sh
   chmod +x conform_config.sh
   ./conform_config.sh
   rm -rf conform_config.sh
@@ -1021,7 +1021,7 @@ apt autoremove -y && apt clean && apt autoclean
 
 # % Prepare source code to be able to build modules
 cd /usr/src/"${KERNEL_VERSION}"
-make -j4 bcm2711_defconfig
+make -j4 bcm2837b0_defconfig
 cp -f /boot/config .config
 make -j4 prepare
 make -j4 modules_prepare
