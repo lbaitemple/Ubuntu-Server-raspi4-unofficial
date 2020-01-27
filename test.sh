@@ -577,7 +577,7 @@ if [ ! -d "rpi-linux" ]; then
   PATH=/opt/cross-pi-gcc-9.2.0-64/bin:$PATH LD_LIBRARY_PATH=/opt/cross-pi-gcc-9.2.0-64/lib:$LD_LIBRARY_PATH make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2837b0_defconfig
 
   # % Run conform_config scripts which fix kernel flags to work correctly in arm64
-  wget https://raw.githubusercontent.com/sakaki-/bcm2837b0-kernel-bis/master/conform_config.sh
+  wget https://raw.githubusercontent.com/sakaki-/bcmrpi3-kernel/master/config -O conform_config.sh
   chmod +x conform_config.sh
   ./conform_config.sh
   rm -rf conform_config.sh
@@ -585,6 +585,7 @@ if [ ! -d "rpi-linux" ]; then
   chmod +x conform_config_jamesachambers.sh
   ./conform_config_jamesachambers.sh
   rm -rf conform_config_jamesachambers.sh
+  
 
   # % This pulls the latest config from the repository -- if building yourself/customizing comment out
   #rm -rf .config
